@@ -7,7 +7,8 @@ monacoInterop.initialize = function initialize(elementId, initialCode, language)
     require(['vs/editor/editor.main'], function initializeEditor() {
         var editor = monaco.editor.create(document.getElementById(elementId), {
             value: initialCode,
-            language: language
+            language: language,
+            automaticLayout: true
         });
         monacoInterop.editors[elementId] = editor;
     });

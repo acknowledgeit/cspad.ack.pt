@@ -38,7 +38,7 @@ class Program
             base.OnAfterRender(firstRender);
             if (firstRender)
             {
-                Monaco.Initialize("container", DefaultCode, "csharp");
+                Monaco.Initialize("editor", DefaultCode, "csharp");
                 Run();
             }
         }
@@ -62,7 +62,7 @@ class Program
             Exception exception = null;
             try
             {
-                var (success, asm) = Compiler.LoadSource(Monaco.GetCode("container"));
+                var (success, asm) = Compiler.LoadSource(Monaco.GetCode("editor"));
                 if (success)
                 {
                     var entry = asm.EntryPoint;
