@@ -2,14 +2,10 @@
 
 @using CSPad.Web.Components
 
-<div id="container">
-    <div id="editor" />
+<MonacoEditor @ref="Editor" Code="@DefaultCode" />
 
-    <div id="controls">
-        <button class="btn btn-primary" @onclick="Run">Run</button>
-    </div>
-
-    <pre id="output" aria-live="polite">
-        @Output
-    </pre>
+<div id="controls">
+    <button class="btn btn-primary" @onclick="Run">Run</button>
 </div>
+
+<pre id="output" aria-live="polite">@Output</pre>

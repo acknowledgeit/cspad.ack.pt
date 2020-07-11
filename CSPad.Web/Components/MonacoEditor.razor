@@ -1,54 +1,35 @@
-﻿@implements IDisposable
-@using Microsoft.JSInterop
-@using System.Text.Json
-@inject IJSRuntime jsRuntime
+﻿@inject IJSRuntime jsRuntime
 
-<div id="@Id" class="monaco-editor-container @CssClass"></div>
+<div id="editor"></div>
 
 @code {
-    [Parameter]
-    public string Id { get; set; }
-
-    [Parameter]
-    public string CssClass { get; set; }
-
-    [Parameter]
-    public string Value { get; set; }
-
-    private static IJSRuntime staticJsRuntime { get; set; }
-
-    [JSInvokable]
-    public async Task EventCallback(string eventName, string eventJson)
+    class Options
     {
+        public bool AutomaticLayout { get; set; }
     }
 
-    public void Dispose()
-    {
-    }
+    [Parameter]
+    public string Code { get; set; }
 
-    protected override void OnInitialized()
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        base.OnInitialized();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender && string.IsNullOrWhiteSpace(Id))
-        {
-            Id = "monaco-editor-" + Guid.NewGuid().ToString();
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
+        base.OnAfterRenderAsync(firstRender);
 
         if (firstRender)
         {
+            jsRuntime.InvokeVoidAsync("monacoInterop.initialize", "editor", Code, "csharp");
         }
+
+        return Task.CompletedTask;
     }
 
-    private static async Task Create(string id, string value)
+    public ValueTask<string> GetCode()
     {
-        var options = JsonSerializer.Deserialize<JsonElement>("");
+        return jsRuntime.InvokeAsync<string>("monacoInterop.getCode", "editor");
+    }
 
-        await staticJsRuntime.InvokeVoidAsync("monacoEditorInterop.create", id, options);
+    public object SetCode(string code)
+    {
+        return jsRuntime.InvokeVoidAsync("monacoInterop.setCode", "editor", code);
     }
 }

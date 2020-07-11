@@ -1,10 +1,11 @@
-﻿using System;
+﻿using CSPad.Web.Components;
+using Microsoft.AspNetCore.Components;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 
 namespace CSPad.Web.Pages
 {
@@ -20,12 +21,13 @@ class Program
         Console.WriteLine(""Hello World"");
     }
 }";
+        private MonacoEditor Editor { get; set; }
 
         [Inject]
         private HttpClient Client { get; set; }
-        
-        [Inject]
-        private Monaco Monaco { get; set; }
+
+        //[Inject]
+        //private Monaco Monaco { get; set; }
 
         protected override Task OnInitializedAsync()
         {
@@ -36,9 +38,10 @@ class Program
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
+
             if (firstRender)
             {
-                Monaco.Initialize("editor", DefaultCode, "csharp");
+                //Monaco.Initialize("editor", DefaultCode, "csharp");
                 Run();
             }
         }
@@ -62,7 +65,8 @@ class Program
             Exception exception = null;
             try
             {
-                var (success, asm) = Compiler.LoadSource(Monaco.GetCode("editor"));
+                var (success, asm) = Compiler.LoadSource(await Editor.GetCode());
+
                 if (success)
                 {
                     var entry = asm.EntryPoint;
