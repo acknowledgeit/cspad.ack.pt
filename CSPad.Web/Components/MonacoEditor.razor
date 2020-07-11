@@ -1,0 +1,54 @@
+﻿@implements IDisposable
+@using Microsoft.JSInterop
+@using System.Text.Json
+@inject IJSRuntime jsRuntime
+
+<div id="@Id" class="monaco-editor-container @CssClass"></div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    [Parameter]
+    public string CssClass { get; set; }
+
+    [Parameter]
+    public string Value { get; set; }
+
+    private static IJSRuntime staticJsRuntime { get; set; }
+
+    [JSInvokable]
+    public async Task EventCallback(string eventName, string eventJson)
+    {
+    }
+
+    public void Dispose()
+    {
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && string.IsNullOrWhiteSpace(Id))
+        {
+            Id = "monaco-editor-" + Guid.NewGuid().ToString();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+        }
+    }
+
+    private static async Task Create(string id, string value)
+    {
+        var options = JsonSerializer.Deserialize<JsonElement>("");
+
+        await staticJsRuntime.InvokeVoidAsync("monacoEditorInterop.create", id, options);
+    }
+}
